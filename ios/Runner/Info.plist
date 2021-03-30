@@ -51,5 +51,9 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>You can select profile photo from Photo Library</string>
+	<key>NSCameraUsageDescription</key>
+    <string>You can take a photo and upload it as your profile image</string>
 </dict>
 </plist>

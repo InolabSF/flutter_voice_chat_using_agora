@@ -16,9 +16,12 @@ class ProfileButton extends StatelessWidget {
         child: Container(
           height: 40.0,
           width: 40.0,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16.0),
-            child: userImagePath == null ? Image.asset('resources/profile.png') : Image.network(userImagePath),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: userImagePath == null ? AssetImage('resources/profile.png') : NetworkImage(userImagePath),
+              fit: BoxFit.contain
+            ),
           ),
         ),
       ),

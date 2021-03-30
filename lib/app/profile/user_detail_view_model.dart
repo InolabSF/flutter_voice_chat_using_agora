@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_voice_chat_using_agora/app/utils/utils.dart';
 import 'package:flutter_voice_chat_using_agora/models/user.dart';
@@ -42,5 +44,11 @@ class UserDetailViewModel {
 
   void updateUserDescription(String newDescription) {
     database.updateUserDescription(uid: user.identifier, description: newDescription);
+  }
+
+  Future<void> updateUserProfileImage(File profileImage) async {
+    UploadTask uploadTask = FirebaseStorage.instance.ref('profileImages/${user.identifier}.png').putFile(profileImage);
+    String downloadUrl = await (await uploadTask).ref.getDownloadURL();
+    database.updateUserProfileImageUrl(uid: user.identifier, userProfileImageUrl: downloadUrl);
   }
 }

@@ -1,5 +1,5 @@
 name: flutter_voice_chat_using_agora
-description: A Clubhouse like app for business
+description: An app to chat via audio
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -23,17 +23,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: ^0.7.0
+  firebase_core: ^1.0.2
   firebase_analytics: ^7.0.1
-  firebase_auth: ^0.20.1
-  cloud_firestore: ^0.16.0+1
+  firebase_auth: ^1.0.1
+  cloud_firestore: ^1.0.3
   flutter_riverpod: ^0.12.4
-  shared_preferences: ^0.5.12+4
-  flutter_svg: ^0.20.0-nullsafety.3
-  equatable: ^2.0.0-nullsafety.3
+  shared_preferences: ^2.0.5
   rxdart: ^0.24.0
   agora_rtc_engine: ^3.3.2
-  permission_handler: ^5.1.0+2
+  permission_handler: ^6.1.1
+  image_picker: ^0.7.3
+  firebase_storage: ^8.0.1
+  flutter_progress_hud: ^2.0.0
 
 dev_dependencies:
   flutter_test:

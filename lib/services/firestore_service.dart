@@ -56,6 +56,12 @@ class FirestoreService {
     });
   }
 
+  void updateUserProfileImageUrl({ String uid, String userProfileImageUrl }) {
+    _service.collection('/users/').doc(uid).update({
+      'imageUrl': userProfileImageUrl
+    });
+  }
+
   Future<List<User>> getFollows(FollowType type) async {
     List<DocumentReference> followerRefs = await _service.doc('/users/$uid/${type.toString()}').get() as List<DocumentReference>;
     List<DocumentSnapshot> followers = await Future.wait(followerRefs.map((followerRef) => followerRef.get()));
