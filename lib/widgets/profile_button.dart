@@ -18,7 +18,7 @@ class ProfileButton extends StatelessWidget {
           width: 40.0,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16.0),
-            child: userImagePath == null ? Image.asset('path/the_image.png') : Image.network(userImagePath),
+            child: userImagePath == null ? Image.asset('resources/profile.png') : Image.network(userImagePath),
           ),
         ),
       ),

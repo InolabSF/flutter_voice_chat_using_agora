@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_voice_chat_using_agora/app/sign_in/email_password_sign_in_model.dart';
 import 'package:flutter_voice_chat_using_agora/app/utils/utils.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_voice_chat_using_agora/services/firestore_service.dart';
 import 'package:flutter_voice_chat_using_agora/widgets/form_submit_button.dart';
 import 'dart:math';
 
@@ -14,8 +15,10 @@ class EmailPasswordSignInScreen extends StatefulWidget {
   final EmailPasswordSignInModel model;
   final VoidCallback onSignedIn;
 
-  factory EmailPasswordSignInScreen.withFirebaseAuth(FirebaseAuth firebaseAuth,
-      {@required VoidCallback onSignedIn}) {
+  factory EmailPasswordSignInScreen.withFirebase(
+    FirebaseAuth firebaseAuth,
+    { @required VoidCallback onSignedIn }
+  ) {
     return EmailPasswordSignInScreen(
       model: EmailPasswordSignInModel(firebaseAuth: firebaseAuth),
       onSignedIn: onSignedIn,
@@ -161,7 +164,7 @@ class _EmailPasswordSignInScreenState extends State<EmailPasswordSignInScreen> {
               onPressed: model.isLoading ? null : _submit,
             ),
             const SizedBox(height: 8.0),
-            FlatButton(
+            TextButton(
               key: const Key('secondary-button'),
               child: Text(model.secondaryButtonText),
               onPressed: model.isLoading
@@ -169,7 +172,7 @@ class _EmailPasswordSignInScreenState extends State<EmailPasswordSignInScreen> {
                   : () => _updateFormType(model.secondaryActionFormType),
             ),
             if (model.formType == EmailPasswordSignInFormType.signIn)
-              FlatButton(
+              TextButton(
                 key: const Key('tertiary-button'),
                 child: const Text(
                     EmailPasswordSignInStrings.forgotPasswordQuestion),

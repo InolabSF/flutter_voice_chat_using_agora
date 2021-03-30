@@ -20,8 +20,8 @@ class UserDetailViewModel {
     return user.displayName;
   }
 
-  String userHandle() {
-    return user.handle;
+  String userEmail() {
+    return user.email;
   }
 
   String followersText() {
@@ -34,6 +34,10 @@ class UserDetailViewModel {
 
   String userDescription() {
     return user.description;
+  }
+
+  void updateUserDisplayName(String newDisplayName) {
+    database.updateUserDisplayName(uid: user.identifier, displayName: newDisplayName);
   }
 
   void updateUserDescription(String newDescription) {

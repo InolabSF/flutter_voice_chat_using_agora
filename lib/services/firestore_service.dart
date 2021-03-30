@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirAuth;
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_voice_chat_using_agora/app/room_detail/room_detail_view_model.dart';
@@ -22,11 +23,31 @@ class FirestoreService {
 
   final _service = FirebaseFirestore.instance;
 
+  static Future<void> createUser(FirAuth.UserCredential userCredential) async {
+    FirAuth.User user = userCredential.user;
+    String email = user.email;
+    String displayName = user.email.split('@')[0];
+    await FirebaseFirestore.instance.collection('/users/').doc(user.uid).set({
+      'description': null,
+      'displayName': displayName,
+      'email': email,
+      'imageUrl': null,
+      'numFollowers': 0,
+      'numFollowing': 0
+    });
+  }
+
   Stream<User> userStream({ String uid }) {
     if (uid == null) {
       uid = this.uid;
     }
     return _service.collection('/users/').doc(uid).snapshots().map((snapshot) => User.fromMap(snapshot.id, snapshot.data()));
+  }
+
+  void updateUserDisplayName({ String uid, String displayName }) {
+    _service.collection('/users/').doc(uid).update({
+      'displayName': displayName
+    });
   }
 
   void updateUserDescription({ String uid, String description }) {

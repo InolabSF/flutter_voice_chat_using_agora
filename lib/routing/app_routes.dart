@@ -24,7 +24,7 @@ class AppRouter {
     switch (settings.name) {
       case AppRoutes.emailPasswordSignInScreen:
         return MaterialPageRoute<dynamic>(
-          builder: (_) => EmailPasswordSignInScreen.withFirebaseAuth(firebaseAuth, onSignedIn: args),
+          builder: (_) => EmailPasswordSignInScreen.withFirebase(firebaseAuth, onSignedIn: args),
           settings: settings,
           fullscreenDialog: true,
         );

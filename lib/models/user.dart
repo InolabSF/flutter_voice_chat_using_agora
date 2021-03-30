@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class User {
   String identifier;
-  String handle;
+  String email;
   String displayName;
   int numFollowers = 0;
   List<User> followers = [];
@@ -17,7 +17,7 @@ class User {
 
   factory User.fromMap(String documentId, Map<String, dynamic> map) {
     User user = User(identifier: documentId);
-    user.handle = map['handle'] as String;
+    user.email = map['email'] as String;
     user.displayName = map['displayName'] as String;
     user.numFollowers = map['numFollowers'] as int;
     user.numFollowing = map['numFollowing'] as int;

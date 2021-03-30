@@ -17,7 +17,8 @@ AutoDisposeStreamProvider<UserDetailViewModel> createUserStreamProvider({ UserDe
 
 class UserDetailScreen extends ConsumerWidget {
   final UserDetailViewModel initialModel;
-  final TextEditingController _txt = TextEditingController();
+  final TextEditingController _nameTxt = TextEditingController();
+  final TextEditingController _descriptionTxt = TextEditingController();
   final AutoDisposeStreamProvider<UserDetailViewModel> userStreamProvider;
   UserDetailScreen({ @required this.initialModel })
     : userStreamProvider = createUserStreamProvider(model: initialModel);
@@ -29,7 +30,7 @@ class UserDetailScreen extends ConsumerWidget {
       width: 120,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: model.userImageUrl() == null ? AssetImage('path/the_image.png') : NetworkImage(model.userImageUrl()),
+          image: model.userImageUrl() == null ? AssetImage('resources/profile.png') : NetworkImage(model.userImageUrl()),
           fit: BoxFit.cover
         ),
         borderRadius: BorderRadius.circular(32.0),
@@ -37,23 +38,27 @@ class UserDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _nameWidget(BuildContext context, UserDetailViewModel model) {
+  Widget _nameWidget(BuildContext context, UserDetailViewModel model, User currentUser) {
     return Padding(
       padding: EdgeInsets.only(left: 16.0),
-      child: Text(
-        model.userDisplayName(),
+      child: TextField(
+        enabled: currentUser == model.user,
+        controller: _nameTxt,
         style: Theme.of(context).textTheme.headline4,
         textAlign: TextAlign.left,
+        onEditingComplete: () {
+          model.updateUserDisplayName(_nameTxt.text);
+        },
       ),
     );
   }
 
-  Widget _handleWidget(BuildContext context, UserDetailViewModel model) {
+  Widget _emailWidget(BuildContext context, UserDetailViewModel model) {
     return Padding(
       padding: EdgeInsets.only(left: 16.0),
       child: Text(
-        model.userHandle(),
-        style: Theme.of(context).textTheme.headline5,
+        model.userEmail(),
+        style: Theme.of(context).textTheme.bodyText1,
         textAlign: TextAlign.left,
       ),
     );
@@ -73,67 +78,68 @@ class UserDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _description(BuildContext context, UserDetailViewModel model, Future<User> currentUserFuture) {
+  Widget _description(BuildContext context, UserDetailViewModel model, User currentUser) {
     return Padding(
       padding: EdgeInsets.only(left: 16.0),
-      child: FutureBuilder<User>(
-        future: currentUserFuture,
-        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            User currentUser = snapshot.data;
-            return TextField(
-              autofocus: false,
-              enabled: currentUser == model.user,
-              controller: _txt,
-              onEditingComplete: () {
-                model.updateUserDescription(_txt.text);
-              },
-            );
-          }
-          return TextField(
-            autofocus: false,
-            enabled: false,
-            controller: _txt,
-          );
-        }
-      ),
+      child: TextField(
+        autofocus: false,
+        enabled: currentUser == model.user,
+        controller: _descriptionTxt,
+        decoration: InputDecoration(
+          hintText: 'Describe yourself'
+        ),
+        onEditingComplete: () {
+          model.updateUserDescription(_descriptionTxt.text);
+        },
+      )
     );
   }
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    Future<User> currentUser = watch(userProvider.last);
+    Future<User> currentUserFuture = watch(userProvider.last);
     final userStream = watch(userStreamProvider);
     return Scaffold(
       appBar: AppBar(),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: userStream.when(
-          data: (UserDetailViewModel viewModel) {
-            _txt.text = viewModel.userDescription();
-            return [
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: _profilePhoto(context, viewModel)
-              ),
-              _nameWidget(context, viewModel),
-              _handleWidget(context, viewModel),
-              SizedBox(height: 16.0,),
-              _numFollowsRow(context, viewModel),
-              _description(context, viewModel, currentUser)
-            ];
-          },
-          loading: () {
-            return [ Center(child: CircularProgressIndicator(),) ];
-          },
-          error: (error, stackTrace) {
-            return [
-              EmptyFeed(
-                message: 'Failed to load user',
+      body: FutureBuilder<User>(
+        future: currentUserFuture,
+        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            User currentUser = snapshot.data;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: userStream.when(
+                data: (UserDetailViewModel viewModel) {
+                  _descriptionTxt.text = viewModel.userDescription();
+                  _nameTxt.text = viewModel.userDisplayName();
+                  return [
+                    Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: _profilePhoto(context, viewModel)
+                    ),
+                    _nameWidget(context, viewModel, currentUser),
+                    SizedBox(height: 16.0),
+                    _emailWidget(context, viewModel),
+                    SizedBox(height: 16.0,),
+                    _numFollowsRow(context, viewModel),
+                    _description(context, viewModel, currentUser)
+                  ];
+                },
+                loading: () {
+                  return [ Center(child: CircularProgressIndicator(),) ];
+                },
+                error: (error, stackTrace) {
+                  return [
+                    EmptyFeed(
+                      message: 'Failed to load user',
+                    )
+                  ];
+                }
               )
-            ];
+            );
           }
-        )
+          return Center(child: CircularProgressIndicator(),);
+        },
       ),
     );
   }

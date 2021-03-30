@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_voice_chat_using_agora/services/firestore_service.dart';
 
 enum EmailPasswordSignInFormType { signIn, register, forgotPassword }
 
@@ -139,11 +140,14 @@ class EmailPasswordSignInModel with EmailAndPasswordValidators, ChangeNotifier {
       switch (formType) {
         case EmailPasswordSignInFormType.signIn:
           await firebaseAuth.signInWithCredential(
-              EmailAuthProvider.credential(email: email, password: password));
+            EmailAuthProvider.credential(email: email, password: password)
+          );
           break;
         case EmailPasswordSignInFormType.register:
-          await firebaseAuth.createUserWithEmailAndPassword(
-              email: email, password: password);
+          UserCredential userCredential = await firebaseAuth.createUserWithEmailAndPassword(
+            email: email, password: password
+          );
+          await FirestoreService.createUser(userCredential);
           break;
         case EmailPasswordSignInFormType.forgotPassword:
           await firebaseAuth.sendPasswordResetEmail(email: email);
