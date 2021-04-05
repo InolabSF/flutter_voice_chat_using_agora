@@ -14,6 +14,10 @@ class SpeakerTileViewModel {
     return speaker.displayName;
   }
 
+  String speakerIdentifier() {
+    return speaker.identifier;
+  }
+
   bool isMuted() {
     return speaker.isMuted;
   }
