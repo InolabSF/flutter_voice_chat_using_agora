@@ -5,7 +5,6 @@ import 'package:flutter_voice_chat_using_agora/app/home/rooms_feed_view_model.da
 import 'package:flutter_voice_chat_using_agora/app/profile/user_detail_screen.dart';
 import 'package:flutter_voice_chat_using_agora/app/profile/user_detail_view_model.dart';
 import 'package:flutter_voice_chat_using_agora/app/room_detail/room_detail_screen.dart';
-import 'package:flutter_voice_chat_using_agora/app/room_detail/room_detail_view_model.dart';
 import 'package:flutter_voice_chat_using_agora/app/sign_in/email_password_sign_in_screen.dart';
 import 'package:flutter_voice_chat_using_agora/models/room.dart';
 import 'package:flutter_voice_chat_using_agora/models/user.dart';
@@ -41,7 +40,7 @@ class AppRouter {
         Room room = (args as Map<String, Object>)['room'];
         User user = (args as Map<String, Object>)['currentUser'];
         return MaterialPageRoute<dynamic>(
-          builder: (_) => RoomDetailScreen(initialModel: RoomDetailViewModel(room: room, currentUser: user, database: database)),
+          builder: (_) => RoomDetailScreen(room: room, currentUser: user),
           settings: settings,
           fullscreenDialog: true
         );

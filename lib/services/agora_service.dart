@@ -39,7 +39,7 @@ class AgoraService {
         remoteUids.remove(uid);
       }
     ));
-    await _engine.joinChannel(Configs.tempToken, channelId, null, uid);
+    await _engine.joinChannel(null, channelId, null, uid);
   }
 
   void leaveChannel() {

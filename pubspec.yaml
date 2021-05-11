@@ -30,7 +30,7 @@ dependencies:
   flutter_riverpod: ^0.12.4
   shared_preferences: ^2.0.5
   rxdart: ^0.24.0
-  agora_rtc_engine: ^3.3.2
+  agora_rtc_engine: ^3.3.3
   permission_handler: ^6.1.1
   image_picker: ^0.7.3
   firebase_storage: ^8.0.1

@@ -5,17 +5,18 @@ import 'package:flutter_voice_chat_using_agora/app/room_detail/room_detail_view_
 import 'package:flutter_voice_chat_using_agora/app/room_detail/speaker_tile.dart';
 import 'package:flutter_voice_chat_using_agora/app/room_detail/speaker_tile_view_model.dart';
 import 'package:flutter_voice_chat_using_agora/app/top_level_providers.dart';
+import 'package:flutter_voice_chat_using_agora/models/room.dart';
 import 'package:flutter_voice_chat_using_agora/models/user.dart';
 import 'package:flutter_voice_chat_using_agora/routing/app_routes.dart';
 import 'package:flutter_voice_chat_using_agora/widgets/form_submit_button.dart';
 import 'package:flutter_voice_chat_using_agora/widgets/profile_button.dart';
 
-AutoDisposeStreamProvider<RoomDetailViewModel> createUsersStreamProvider({ RoomDetailViewModel model }) {
+AutoDisposeStreamProvider<RoomDetailViewModel> createUsersStreamProvider({ Room room, User currentUser }) {
   return StreamProvider.autoDispose<RoomDetailViewModel>((ref) {
     final database = ref.watch(databaseProvider);
     final agora = ref.watch(agoraProvider);
     if (agora != null && database != null) {
-      return database.roomStream(agoraService: agora, room: model.room, currentUser: model.currentUser);
+      return database.roomStream(agoraService: agora, room: room, currentUser: currentUser);
     }
     return const Stream.empty();
   });
@@ -23,10 +24,11 @@ AutoDisposeStreamProvider<RoomDetailViewModel> createUsersStreamProvider({ RoomD
 
 class RoomDetailScreen extends ConsumerWidget {
 
-  final RoomDetailViewModel initialModel;
+  final Room room;
+  final User currentUser;
   final AutoDisposeStreamProvider<RoomDetailViewModel> usersStreamProvider;
-  RoomDetailScreen({ @required this.initialModel })
-      : usersStreamProvider = createUsersStreamProvider(model: initialModel);
+  RoomDetailScreen({ @required this.room, @required this.currentUser })
+      : usersStreamProvider = createUsersStreamProvider(room: room, currentUser: currentUser);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
