@@ -21,7 +21,12 @@ class AgoraService {
     await _engine.setClientRole(ClientRole.Broadcaster);
   }
 
-  Future<void> joinChannel({ String channelId, Function onJoinChannelComplete, Function onLeaveChannelComplete }) async {
+  Future<void> joinChannel({
+    String channelId,
+    Function onJoinChannelComplete,
+    Function onLeaveChannelComplete,
+    Function onMuteStatusChanged,
+  }) async {
     if (_engine == null) {
       _initEngine();
     }
@@ -37,12 +42,17 @@ class AgoraService {
       },
       userOffline: (int uid, UserOfflineReason reason) {
         remoteUids.remove(uid);
-      }
+      },
+      userMuteAudio: (int uid, bool isMuted) {
+        if (uid == this.uid) {
+          onMuteStatusChanged();
+        }
+      },
     ));
     await _engine.joinChannel(null, channelId, null, uid);
   }
 
-  void leaveChannel() {
-    _engine?.leaveChannel();
+  Future<void> leaveChannel() async {
+    await _engine?.leaveChannel();
   }
 }

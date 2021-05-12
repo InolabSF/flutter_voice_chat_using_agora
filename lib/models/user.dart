@@ -1,5 +1,6 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_voice_chat_using_agora/models/room.dart';
 
 class User {
   String identifier;
@@ -12,6 +13,8 @@ class User {
   String description;
   String imageUrl;
   bool isMuted = false;
+  DocumentReference participatingRoomReference;
+  Room participatingRoom;
 
   User({ @required this.identifier });
 
@@ -24,6 +27,7 @@ class User {
     user.description = map['description'] as String;
     user.imageUrl = map['imageUrl'] as String;
     user.isMuted = map['isMuted'] as bool ?? false;
+    user.participatingRoomReference = map['participating'] as DocumentReference;
     return user;
   }
 

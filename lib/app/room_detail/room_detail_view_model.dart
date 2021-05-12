@@ -24,11 +24,19 @@ class RoomDetailViewModel {
     return room.speakerRefs.map((ref) => ref.id).contains(currentUser.identifier);
   }
 
+  bool isParticipatingInAnotherRoom() {
+    return !isParticipating() && currentUser.participatingRoomReference != null;
+  }
+
   String joinButtonText() {
     if (isParticipating()) {
       return 'Leave room';
     }
     return 'Join room';
+  }
+
+  leaveRoom() async {
+    await agora.leaveChannel();
   }
 
   joinRoom() async {
@@ -44,7 +52,11 @@ class RoomDetailViewModel {
     );
   }
 
-  leaveRoom() {
-    agora.leaveChannel();
+  String leavingCurrentlyJoinedRoomTitle() {
+    return 'Leaving current room';
+  }
+
+  String leavingCurrentlyJoinedRoomDescription() {
+    return 'By joining this room, you will leave the currently joined room.';
   }
 }

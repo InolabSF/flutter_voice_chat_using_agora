@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_voice_chat_using_agora/app/home/empty_feed.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_voice_chat_using_agora/app/top_level_providers.dart';
 import 'package:flutter_voice_chat_using_agora/models/room.dart';
 import 'package:flutter_voice_chat_using_agora/models/user.dart';
 import 'package:flutter_voice_chat_using_agora/routing/app_routes.dart';
+import 'package:flutter_voice_chat_using_agora/widgets/dialog_helper.dart';
 import 'package:flutter_voice_chat_using_agora/widgets/form_submit_button.dart';
 import 'package:flutter_voice_chat_using_agora/widgets/profile_button.dart';
 
@@ -110,7 +112,10 @@ class RoomDetailScreen extends ConsumerWidget {
                     onPressed: () async {
                       if (model.isParticipating()) {
                         await model.leaveRoom();
-                      } else {
+                      } else if (model.isParticipatingInAnotherRoom()) {
+                        AwesomeDialog dialog = DialogHelper.leavingParticipatingRoomDialog(context, model);
+                        dialog.show();
+                        await model.leaveRoom();
                         await model.joinRoom();
                       }
                     }

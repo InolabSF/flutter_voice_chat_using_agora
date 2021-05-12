@@ -1,4 +1,8 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_voice_chat_using_agora/models/room.dart';
+import 'package:flutter_voice_chat_using_agora/widgets/form_submit_button.dart';
+import 'package:flutter_voice_chat_using_agora/widgets/dialog_helper.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_voice_chat_using_agora/app/home/empty_feed.dart';
 import 'package:flutter_voice_chat_using_agora/app/home/rooms/room_tile.dart';
@@ -13,12 +17,12 @@ import 'package:flutter_voice_chat_using_agora/widgets/profile_button.dart';
 
 final roomsTileModelStreamProvider = StreamProvider.autoDispose<List<RoomTileViewModel>>((ref) {
   final database = ref.watch(databaseProvider);
-  if (database != null) {
-    final vm = RoomsFeedViewModel(database: database);
+  final auth = ref.watch(firebaseAuthProvider);
+  if (database != null && auth != null) {
     final userStream = database.userStream();
-    final viewModelsStream = vm.roomTileViewModelsStream();
-    return Rx.combineLatest2(userStream, viewModelsStream, (User user, List<RoomTileViewModel> models) {
-      return models.map((model) => RoomTileViewModel(room: model.room, currentUser: user)).toList();
+    final roomsStream = database.roomsStream();
+    return Rx.combineLatest2(userStream, roomsStream, (User user, List<Room> rooms) {
+      return rooms.map((room) => RoomTileViewModel(room: room, currentUser: user)).toList();
     });
   }
   return const Stream.empty();
@@ -33,6 +37,8 @@ class RoomsFeed extends ConsumerWidget {
     @required this.model,
     @required this.onSignOut
   });
+
+  final TextEditingController _createdRoomNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -101,8 +107,36 @@ class RoomsFeed extends ConsumerWidget {
               );
             }
           ),
-          model.isLoading ? Center(child: CircularProgressIndicator(),) : Container()
-        ]),
+          model.isLoading ? Center(child: CircularProgressIndicator(),) : Container(),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+              width: double.infinity,
+              child: FormSubmitButton(
+                key: const Key('create-room-button'),
+                text: model.createRoomButtonText(),
+                initialLoading: false,
+                onPressed: () async {
+                  AwesomeDialog dialog = DialogHelper.createdRoomNameDialog(context, _createdRoomNameController, model);
+                  await dialog.show();
+                  String roomName = _createdRoomNameController.text;
+                  if (model.currentUserIsParticipatingInARoom()) {
+                    AwesomeDialog leavingCurrentRoomDialog = DialogHelper.leavingParticipatingRoomDialogUponRoomCreate(context, model);
+                    leavingCurrentRoomDialog.show();
+                  }
+                  Room room = await model.createRoom(roomName);
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.roomDetail,
+                    arguments: { 'room': room, 'currentUser': model.user },
+                  );
+                }
+              )
+            )
+          )
+        ]
+      ),
     );
   }
 }

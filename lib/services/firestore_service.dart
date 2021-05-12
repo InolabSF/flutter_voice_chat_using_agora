@@ -91,11 +91,29 @@ class FirestoreService {
     _service.doc('/rooms/${room.identifier}').update({
       'speakers': FieldValue.arrayRemove([_service.collection('users').doc(speaker.identifier)])
     });
+    _service.doc('/users/${speaker.identifier}').update({
+      'participating': FieldValue.delete()
+    });
   }
 
   void addSpeaker({ Room room, User speaker }) {
     _service.doc('/rooms/${room.identifier}').update({
       'speakers': FieldValue.arrayUnion([_service.collection('users').doc(speaker.identifier)])
     });
+    _service.doc('/users/${speaker.identifier}').update({
+      'participating': _service.collection('rooms').doc(room.identifier)
+    });
+  }
+
+  Future<Room> createRoom({ User currentUser, String roomName }) async {
+    DocumentReference ref = await _service.collection('rooms').add({
+      'title': roomName,
+      'speakers': [_service.collection('users').doc(currentUser.identifier)]
+    });
+    _service.doc('/users/${currentUser.identifier}').update({
+      'participating': ref
+    });
+    Room createdRoom = Room(identifier: ref.id, title: roomName);
+    return createdRoom;
   }
 }

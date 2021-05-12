@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_voice_chat_using_agora/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_voice_chat_using_agora/routing/app_routes.dart';
 import 'package:flutter_voice_chat_using_agora/services/shared_preferences_service.dart';
@@ -50,7 +51,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final firebaseAuth = context.read(firebaseAuthProvider);
-    final database = context.read(databaseProvider);
     return MaterialApp(
       theme: ThemeData(primarySwatch: Colors.indigo),
       debugShowCheckedModeBanner: false,
@@ -61,12 +61,31 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             return didCompleteOnboarding ? SignInScreen() : OnboardingScreen();
           },
         ),
-        signedInBuilder: (_) => RoomsFeed(
-          model: RoomsFeedViewModel(auth: firebaseAuth),
-          onSignOut: () {},
+        signedInBuilder: (_) => Consumer(
+          builder: (context, watch, _) {
+            final database = watch(databaseProvider);
+            final currentUserStream = watch(userProvider);
+            return currentUserStream.when(
+              data: (User user) {
+                return RoomsFeed(
+                  model: RoomsFeedViewModel(auth: firebaseAuth, database: database, user: user),
+                  onSignOut: () {},
+                );
+              },
+              loading: () {
+                return Container();
+              },
+              error: (error, stackTrace) {
+                return Container();
+              }
+            );
+          },
         ),
       ),
-      onGenerateRoute: (settings) => AppRouter.onGenerateRoute(settings, firebaseAuth, database),
+      onGenerateRoute: (settings) {
+        final database = context.read(databaseProvider);
+        return AppRouter.onGenerateRoute(settings, firebaseAuth, database);
+      },
     );
   }
 }

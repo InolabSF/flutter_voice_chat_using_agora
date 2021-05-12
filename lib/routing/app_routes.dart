@@ -30,7 +30,7 @@ class AppRouter {
       case AppRoutes.roomsFeed:
         return MaterialPageRoute<dynamic>(
           builder: (_) => RoomsFeed(
-            model: RoomsFeedViewModel(auth: firebaseAuth),
+            model: RoomsFeedViewModel(auth: firebaseAuth, database: database),
             onSignOut: args,
           ),
           settings: settings,
