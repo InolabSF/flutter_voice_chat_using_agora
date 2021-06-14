@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_voice_chat_using_agora/services/shared_preferences_service.dart';
 import 'package:state_notifier/state_notifier.dart';
 
-final onboardingViewModelProvider = StateNotifierProvider<OnboardingViewModel>((ref) {
+final onboardingViewModelProvider = StateNotifierProvider<OnboardingViewModel, bool>((ref) {
   final sharedPreferencesService = ref.watch(sharedPreferencesServiceProvider);
   return OnboardingViewModel(sharedPreferencesService);
 });

@@ -12,6 +12,7 @@ import 'package:flutter_voice_chat_using_agora/routing/app_routes.dart';
 import 'package:flutter_voice_chat_using_agora/widgets/dialog_helper.dart';
 import 'package:flutter_voice_chat_using_agora/widgets/form_submit_button.dart';
 import 'package:flutter_voice_chat_using_agora/widgets/profile_button.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 AutoDisposeStreamProvider<RoomDetailViewModel> createUsersStreamProvider({ Room room, User currentUser }) {
   return StreamProvider.autoDispose<RoomDetailViewModel>((ref) {
@@ -102,24 +103,54 @@ class RoomDetailScreen extends ConsumerWidget {
               ),
               Align(
                 alignment: Alignment.bottomCenter,
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                  width: double.infinity,
-                  child: FormSubmitButton(
-                    key: const Key('join-room-button'),
-                    text: model.joinButtonText(),
-                    initialLoading: false,
-                    onPressed: () async {
-                      if (model.isParticipating()) {
-                        await model.leaveRoom();
-                      } else if (model.isParticipatingInAnotherRoom()) {
-                        AwesomeDialog dialog = DialogHelper.leavingParticipatingRoomDialog(context, model);
-                        dialog.show();
-                        await model.leaveRoom();
-                        await model.joinRoom();
+                child: Column(
+                  children: [
+                    Expanded(child: Container()),
+                    model.isParticipating() ? Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(right: 16.0),
+                          child: currentUserStream.when(
+                            data: (User user) {
+                              return IconButton(
+                                icon: user.isMuted ? FaIcon(FontAwesomeIcons.microphone) : FaIcon(FontAwesomeIcons.microphoneSlash),
+                                onPressed: () {
+                                  model.toggleMute(!user.isMuted);
+                                }
+                              );
+                            },
+                            loading: () {
+                              return Container();
+                            },
+                            error: (error, stackTrace) {
+                              return Container();
+                            }
+                          )
+                        )
+                      ],
+                    ) : Container(),
+                    Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    width: double.infinity,
+                    child: FormSubmitButton(
+                      key: const Key('join-room-button'),
+                      text: model.joinButtonText(),
+                      initialLoading: false,
+                      onPressed: () async {
+                        if (model.isParticipating()) {
+                          await model.leaveRoom();
+                        } else if (model.isParticipatingInAnotherRoom()) {
+                          AwesomeDialog dialog = DialogHelper.leavingParticipatingRoomDialog(context, model);
+                          dialog.show();
+                          await model.leaveRoom();
+                          await model.joinRoom();
+                        } else {
+                          await model.joinRoom();
+                        }
                       }
-                    }
-                  )
+                    )
+                  )],
                 ),
               )
             ]

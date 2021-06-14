@@ -23,19 +23,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: ^1.0.2
-  firebase_analytics: ^7.0.1
-  firebase_auth: ^1.0.1
-  cloud_firestore: ^1.0.3
-  flutter_riverpod: ^0.12.4
-  shared_preferences: ^2.0.5
+  firebase_core: ^1.3.0
+  firebase_analytics: ^8.1.2
+  firebase_auth: ^1.4.1
+  cloud_firestore: ^2.2.2
+  flutter_riverpod: ^0.14.0+3
+  shared_preferences: ^2.0.6
   rxdart: ^0.24.0
-  agora_rtc_engine: ^3.3.3
+  agora_rtc_engine: ^4.0.2
   permission_handler: ^6.1.1
   image_picker: ^0.7.3
-  firebase_storage: ^8.0.1
+  firebase_storage: ^8.1.3
   flutter_progress_hud: ^2.0.0
   awesome_dialog: ^2.0.0
+  font_awesome_flutter: ^9.1.0
 
 dev_dependencies:
   flutter_test:

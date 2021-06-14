@@ -4,7 +4,7 @@ import 'package:flutter_voice_chat_using_agora/app/onboarding/onboarding_view_mo
 
 class OnboardingScreen extends StatelessWidget {
   Future<void> onGetStarted(BuildContext context) async {
-    final onboardingViewModel = context.read(onboardingViewModelProvider);
+    final onboardingViewModel = context.read(onboardingViewModelProvider.notifier);
     await onboardingViewModel.completeOnboarding();
   }
 

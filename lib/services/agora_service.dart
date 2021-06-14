@@ -31,6 +31,9 @@ class AgoraService {
       _initEngine();
     }
     _engine?.setEventHandler(RtcEngineEventHandler(
+      activeSpeaker: (uid) {
+        // TODO: UI indication of who is speaking
+      },
       joinChannelSuccess: (String channel, int uid, int elapsed) {
         onJoinChannelComplete();
       },
@@ -45,14 +48,18 @@ class AgoraService {
       },
       userMuteAudio: (int uid, bool isMuted) {
         if (uid == this.uid) {
-          onMuteStatusChanged();
+          onMuteStatusChanged(isMuted);
         }
       },
     ));
-    await _engine.joinChannel(null, channelId, null, uid);
+    await _engine.joinChannel("<Room token to come here>", channelId, null, uid);
   }
 
   Future<void> leaveChannel() async {
     await _engine?.leaveChannel();
+  }
+
+  Future<void> toggleMute(bool muted) async {
+    await _engine?.muteLocalAudioStream(muted);
   }
 }

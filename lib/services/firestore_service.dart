@@ -105,6 +105,12 @@ class FirestoreService {
     });
   }
 
+  void setMuteStatus({ User speaker, bool isMuted }) {
+    _service.doc('/users/${speaker.identifier}').update({
+      'isMuted': isMuted
+    });
+  }
+
   Future<Room> createRoom({ User currentUser, String roomName }) async {
     DocumentReference ref = await _service.collection('rooms').add({
       'title': roomName,

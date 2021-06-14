@@ -49,7 +49,17 @@ class RoomDetailViewModel {
       onLeaveChannelComplete: () {
         database.removeSpeaker(room: room, speaker: currentUser);
       },
+      onMuteStatusChanged: (bool isMuted) {
+        database.setMuteStatus(
+          speaker: currentUser,
+          isMuted: isMuted
+        );
+      }
     );
+  }
+
+  void toggleMute(bool muted) {
+    agora.toggleMute(muted);
   }
 
   String leavingCurrentlyJoinedRoomTitle() {

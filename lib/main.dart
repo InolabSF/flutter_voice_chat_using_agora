@@ -57,8 +57,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       home: AuthWidget(
         nonSignedInBuilder: (_) => Consumer(
           builder: (context, watch, _) {
-            final didCompleteOnboarding = watch(onboardingViewModelProvider.state);
-            return didCompleteOnboarding ? SignInScreen() : OnboardingScreen();
+            final bool onboardingComplete = watch(onboardingViewModelProvider);
+            return onboardingComplete ? SignInScreen() : OnboardingScreen();
           },
         ),
         signedInBuilder: (_) => Consumer(
