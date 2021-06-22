@@ -17,6 +17,7 @@ class AgoraService {
     _engine = await RtcEngine.createWithConfig(RtcEngineConfig(this.agoraAppId));
 
     await _engine.enableAudio();
+    await _engine.enableAudioVolumeIndication(500, 3, false);
     await _engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
     await _engine.setClientRole(ClientRole.Broadcaster);
   }
@@ -26,13 +27,18 @@ class AgoraService {
     Function onJoinChannelComplete,
     Function onLeaveChannelComplete,
     Function onMuteStatusChanged,
+    Function setActiveSpeaker
   }) async {
     if (_engine == null) {
       _initEngine();
     }
     _engine?.setEventHandler(RtcEngineEventHandler(
       activeSpeaker: (uid) {
-        // TODO: UI indication of who is speaking
+        if (uid == this.uid) {
+          setActiveSpeaker(true);
+        } else {
+          setActiveSpeaker(false);
+        }
       },
       joinChannelSuccess: (String channel, int uid, int elapsed) {
         onJoinChannelComplete();
@@ -46,7 +52,19 @@ class AgoraService {
       userOffline: (int uid, UserOfflineReason reason) {
         remoteUids.remove(uid);
       },
+      remoteAudioStateChanged: (int uid, AudioRemoteState state, AudioRemoteStateReason reason, int elapsed) {
+        if (uid == this.uid && reason == AudioRemoteStateReason.LocalMuted) {
+          onMuteStatusChanged(true);
+        } else if (uid == this.uid && reason == AudioRemoteStateReason.LocalUnmuted) {
+          onMuteStatusChanged(false);
+        }
+      },
       userMuteAudio: (int uid, bool isMuted) {
+        if (uid == this.uid) {
+          onMuteStatusChanged(isMuted);
+        }
+      },
+      userMuteVideo: (int uid, bool isMuted) {
         if (uid == this.uid) {
           onMuteStatusChanged(isMuted);
         }

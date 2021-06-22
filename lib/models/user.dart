@@ -13,6 +13,7 @@ class User {
   String description;
   String imageUrl;
   bool isMuted = false;
+  bool isSpeaking = false;
   DocumentReference participatingRoomReference;
   Room participatingRoom;
 
@@ -27,6 +28,7 @@ class User {
     user.description = map['description'] as String;
     user.imageUrl = map['imageUrl'] as String;
     user.isMuted = map['isMuted'] as bool ?? false;
+    user.isSpeaking = map['isSpeaking'] as bool ?? false;
     user.participatingRoomReference = map['participating'] as DocumentReference;
     return user;
   }

@@ -21,4 +21,8 @@ class SpeakerTileViewModel {
   bool isMuted() {
     return speaker.isMuted;
   }
+
+  bool isSpeaking() {
+    return speaker.isSpeaking;
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_voice_chat_using_agora/app/room_detail/speaker_tile_view_model.dart';
 import 'package:flutter_voice_chat_using_agora/app/top_level_providers.dart';
 import 'package:flutter_voice_chat_using_agora/routing/app_routes.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SpeakerTile extends ConsumerWidget {
 
@@ -15,6 +16,16 @@ class SpeakerTile extends ConsumerWidget {
       child: Container(
         color: Colors.white,
         child: Icon(Icons.mic_off_rounded)
+      ),
+    );
+  }
+
+  Widget _speakerIndicator(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8.0),
+      child: Container(
+        color: Colors.white,
+        child: FaIcon(FontAwesomeIcons.commentDots)
       ),
     );
   }
@@ -58,6 +69,11 @@ class SpeakerTile extends ConsumerWidget {
                     bottom: 0,
                     right: 0,
                     child: model.isMuted() ? _muteIndicator(context) : Container(),
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: model.isSpeaking() ? _speakerIndicator(context) : Container(),
                   )
                 ],
               ),

@@ -54,6 +54,12 @@ class RoomDetailViewModel {
           speaker: currentUser,
           isMuted: isMuted
         );
+      },
+      setActiveSpeaker: (bool isSpeaking) {
+        database.setActiveSpeaker(
+          speaker: currentUser,
+          isSpeaking: isSpeaking
+        );
       }
     );
   }

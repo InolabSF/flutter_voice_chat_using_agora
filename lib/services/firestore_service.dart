@@ -111,6 +111,12 @@ class FirestoreService {
     });
   }
 
+  void setActiveSpeaker({ User speaker, bool isSpeaking }) {
+    _service.doc('/users/${speaker.identifier}').update({
+      'isSpeaking': isSpeaking
+    });
+  }
+
   Future<Room> createRoom({ User currentUser, String roomName }) async {
     DocumentReference ref = await _service.collection('rooms').add({
       'title': roomName,

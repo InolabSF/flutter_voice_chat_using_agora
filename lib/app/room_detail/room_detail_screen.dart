@@ -63,108 +63,110 @@ class RoomDetailScreen extends ConsumerWidget {
           )
         ],
       ),
-      body: usersStream.when(
-        data: (model) {
-          return Stack(
-            children: [
-              Column(
-                children: [
-                  SizedBox(height: 16.0,),
-                  Text(
-                    model.room.title,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headline5,
-                  ),
-                  Expanded(
-                    child: FutureBuilder<List<User>>(
-                      future: model.participants(),
-                      builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          List<User> users = snapshot.data;
-                          return Padding(
-                            padding: EdgeInsets.only(top: 16.0),
-                            child: GridView.count(
-                              crossAxisCount: numTilesHorizontal,
-                              children: List.generate(users.length, (index) {
-                                final user = users[index];
-                                return SpeakerTile(
-                                  model: SpeakerTileViewModel(speaker: user)
-                                );
-                              }),
-                            ),
-                          );
-                        } else {
-                          return Center(child: CircularProgressIndicator());
-                        }
-                      }
-                    )
-                  ),
-                ]
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Column(
+      body: SafeArea(
+        child: usersStream.when(
+          data: (model) {
+            return Stack(
+              children: [
+                Column(
                   children: [
-                    Expanded(child: Container()),
-                    model.isParticipating() ? Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(right: 16.0),
-                          child: currentUserStream.when(
-                            data: (User user) {
-                              return IconButton(
-                                icon: user.isMuted ? FaIcon(FontAwesomeIcons.microphone) : FaIcon(FontAwesomeIcons.microphoneSlash),
-                                onPressed: () {
-                                  model.toggleMute(!user.isMuted);
-                                }
-                              );
-                            },
-                            loading: () {
-                              return Container();
-                            },
-                            error: (error, stackTrace) {
-                              return Container();
-                            }
-                          )
-                        )
-                      ],
-                    ) : Container(),
-                    Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                    width: double.infinity,
-                    child: FormSubmitButton(
-                      key: const Key('join-room-button'),
-                      text: model.joinButtonText(),
-                      initialLoading: false,
-                      onPressed: () async {
-                        if (model.isParticipating()) {
-                          await model.leaveRoom();
-                        } else if (model.isParticipatingInAnotherRoom()) {
-                          AwesomeDialog dialog = DialogHelper.leavingParticipatingRoomDialog(context, model);
-                          dialog.show();
-                          await model.leaveRoom();
-                          await model.joinRoom();
-                        } else {
-                          await model.joinRoom();
+                    SizedBox(height: 16.0,),
+                    Text(
+                      model.room.title,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                    Expanded(
+                      child: FutureBuilder<List<User>>(
+                        future: model.participants(),
+                        builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+                          if (snapshot.connectionState == ConnectionState.done) {
+                            List<User> users = snapshot.data;
+                            return Padding(
+                              padding: EdgeInsets.only(top: 16.0),
+                              child: GridView.count(
+                                crossAxisCount: numTilesHorizontal,
+                                children: List.generate(users.length, (index) {
+                                  final user = users[index];
+                                  return SpeakerTile(
+                                    model: SpeakerTileViewModel(speaker: user)
+                                  );
+                                }),
+                              ),
+                            );
+                          } else {
+                            return Center(child: CircularProgressIndicator());
+                          }
                         }
-                      }
-                    )
-                  )],
+                      )
+                    ),
+                  ]
                 ),
-              )
-            ]
-          );
-        },
-        loading: () {
-          return Center(child: CircularProgressIndicator());
-        },
-        error: (error, stackTrace) {
-          return const EmptyFeed(
-            title: 'Something went wrong',
-            message: 'Can\'t load users right now',
-          );
-        }
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Column(
+                    children: [
+                      Expanded(child: Container()),
+                      model.isParticipating() ? Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(right: 16.0),
+                            child: currentUserStream.when(
+                              data: (User user) {
+                                return IconButton(
+                                  icon: user.isMuted ? FaIcon(FontAwesomeIcons.microphone) : FaIcon(FontAwesomeIcons.microphoneSlash),
+                                  onPressed: () {
+                                    model.toggleMute(!user.isMuted);
+                                  }
+                                );
+                              },
+                              loading: () {
+                                return Container();
+                              },
+                              error: (error, stackTrace) {
+                                return Container();
+                              }
+                            )
+                          )
+                        ],
+                      ) : Container(),
+                      Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      width: double.infinity,
+                      child: FormSubmitButton(
+                        key: const Key('join-room-button'),
+                        text: model.joinButtonText(),
+                        initialLoading: false,
+                        onPressed: () async {
+                          if (model.isParticipating()) {
+                            await model.leaveRoom();
+                          } else if (model.isParticipatingInAnotherRoom()) {
+                            AwesomeDialog dialog = DialogHelper.leavingParticipatingRoomDialog(context, model);
+                            dialog.show();
+                            await model.leaveRoom();
+                            await model.joinRoom();
+                          } else {
+                            await model.joinRoom();
+                          }
+                        }
+                      )
+                    )],
+                  ),
+                )
+              ]
+            );
+          },
+          loading: () {
+            return Center(child: CircularProgressIndicator());
+          },
+          error: (error, stackTrace) {
+            return const EmptyFeed(
+              title: 'Something went wrong',
+              message: 'Can\'t load users right now',
+            );
+          }
+        ),
       )
     );
   }
