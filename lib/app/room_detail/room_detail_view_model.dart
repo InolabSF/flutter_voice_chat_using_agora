@@ -37,6 +37,7 @@ class RoomDetailViewModel {
 
   leaveRoom() async {
     await agora.leaveChannel();
+    database.removeSpeaker(room: room, speaker: currentUser);
   }
 
   joinRoom() async {

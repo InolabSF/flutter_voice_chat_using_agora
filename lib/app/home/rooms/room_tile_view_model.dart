@@ -5,11 +5,10 @@ import 'package:flutter_voice_chat_using_agora/models/user.dart';
 class RoomTileViewModel {
 
   final Room room;
-  final User currentUser;
 
   String roomTitle = '';
 
-  RoomTileViewModel({ @required this.room, @required this.currentUser }) {
+  RoomTileViewModel({ @required this.room }) {
     this.roomTitle = this.room.title;
   }
 

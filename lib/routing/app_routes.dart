@@ -38,9 +38,8 @@ class AppRouter {
         );
       case AppRoutes.roomDetail:
         Room room = (args as Map<String, Object>)['room'];
-        User user = (args as Map<String, Object>)['currentUser'];
         return MaterialPageRoute<dynamic>(
-          builder: (_) => RoomDetailScreen(room: room, currentUser: user),
+          builder: (_) => RoomDetailScreen(room: room),
           settings: settings,
           fullscreenDialog: true
         );

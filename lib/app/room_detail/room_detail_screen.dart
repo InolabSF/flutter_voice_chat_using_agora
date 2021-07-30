@@ -14,12 +14,19 @@ import 'package:flutter_voice_chat_using_agora/widgets/form_submit_button.dart';
 import 'package:flutter_voice_chat_using_agora/widgets/profile_button.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-AutoDisposeStreamProvider<RoomDetailViewModel> createUsersStreamProvider({ Room room, User currentUser }) {
+AutoDisposeStreamProvider<RoomDetailViewModel> createUsersStreamProvider({ Room room }) {
   return StreamProvider.autoDispose<RoomDetailViewModel>((ref) {
     final database = ref.watch(databaseProvider);
     final agora = ref.watch(agoraProvider);
-    if (agora != null && database != null) {
-      return database.roomStream(agoraService: agora, room: room, currentUser: currentUser);
+    final currentUserStream = ref.watch(userProvider);
+    if (database != null && agora != null && currentUserStream != null) {
+      return currentUserStream.when(
+        data: (User currentUser) {
+          return database.roomStream(agoraService: agora, room: room, currentUser: currentUser);
+        },
+        loading: () => const Stream.empty(),
+        error: (error, stackTrace) => const Stream.empty()
+      );
     }
     return const Stream.empty();
   });
@@ -28,10 +35,9 @@ AutoDisposeStreamProvider<RoomDetailViewModel> createUsersStreamProvider({ Room 
 class RoomDetailScreen extends ConsumerWidget {
 
   final Room room;
-  final User currentUser;
   final AutoDisposeStreamProvider<RoomDetailViewModel> usersStreamProvider;
-  RoomDetailScreen({ @required this.room, @required this.currentUser })
-      : usersStreamProvider = createUsersStreamProvider(room: room, currentUser: currentUser);
+  RoomDetailScreen({ @required this.room })
+      : usersStreamProvider = createUsersStreamProvider(room: room);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {

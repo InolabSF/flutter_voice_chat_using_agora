@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_voice_chat_using_agora/models/room.dart';
 import 'package:flutter_voice_chat_using_agora/widgets/form_submit_button.dart';
 import 'package:flutter_voice_chat_using_agora/widgets/dialog_helper.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:flutter_voice_chat_using_agora/app/home/empty_feed.dart';
 import 'package:flutter_voice_chat_using_agora/app/home/rooms/room_tile.dart';
 import 'package:flutter_voice_chat_using_agora/app/home/rooms/room_tile_view_model.dart';
@@ -19,11 +18,7 @@ final roomsTileModelStreamProvider = StreamProvider.autoDispose<List<RoomTileVie
   final database = ref.watch(databaseProvider);
   final auth = ref.watch(firebaseAuthProvider);
   if (database != null && auth != null) {
-    final userStream = database.userStream();
-    final roomsStream = database.roomsStream();
-    return Rx.combineLatest2(userStream, roomsStream, (User user, List<Room> rooms) {
-      return rooms.map((room) => RoomTileViewModel(room: room, currentUser: user)).toList();
-    });
+    return database.roomsStream().map((rooms) => rooms.map((room) => RoomTileViewModel(room: room)).toList());
   }
   return const Stream.empty();
 });
@@ -90,7 +85,7 @@ class RoomsFeed extends ConsumerWidget {
                       Navigator.pushNamed(
                         context,
                         AppRoutes.roomDetail,
-                        arguments: { 'room': item.room, 'currentUser': item.currentUser },
+                        arguments: { 'room': item.room },
                       );
                     },
                   );
@@ -129,7 +124,7 @@ class RoomsFeed extends ConsumerWidget {
                   Navigator.pushNamed(
                     context,
                     AppRoutes.roomDetail,
-                    arguments: { 'room': room, 'currentUser': model.user },
+                    arguments: { 'room': room },
                   );
                 }
               )
