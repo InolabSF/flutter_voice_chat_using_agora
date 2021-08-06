@@ -16,8 +16,7 @@ import 'package:flutter_voice_chat_using_agora/widgets/profile_button.dart';
 
 final roomsTileModelStreamProvider = StreamProvider.autoDispose<List<RoomTileViewModel>>((ref) {
   final database = ref.watch(databaseProvider);
-  final auth = ref.watch(firebaseAuthProvider);
-  if (database != null && auth != null) {
+  if (database != null) {
     return database.roomsStream().map((rooms) => rooms.map((room) => RoomTileViewModel(room: room)).toList());
   }
   return const Stream.empty();

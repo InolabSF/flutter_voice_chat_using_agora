@@ -1,6 +1,5 @@
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_voice_chat_using_agora/constants/configs.dart';
 
 class AgoraService {
 
@@ -64,13 +63,8 @@ class AgoraService {
           onMuteStatusChanged(isMuted);
         }
       },
-      userMuteVideo: (int uid, bool isMuted) {
-        if (uid == this.uid) {
-          onMuteStatusChanged(isMuted);
-        }
-      },
     ));
-    await _engine.joinChannel("<Room token to come here>", channelId, null, uid);
+    await _engine.joinChannel(null, channelId, null, uid);
   }
 
   Future<void> leaveChannel() async {
